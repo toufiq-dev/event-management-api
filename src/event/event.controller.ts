@@ -30,21 +30,27 @@ export class EventController {
 
   @Get()
   @ApiOperation({ summary: 'Get all events' })
-  @ApiResponse({ status: 200, description: 'Return all events' })
+  @ApiResponse({
+    status: 200,
+    description: 'All events successfully returned',
+  })
   findAll() {
     return this.eventService.findAll();
   }
 
   @Get('filter')
   @ApiOperation({ summary: 'Filter events by date' })
-  @ApiResponse({ status: 200, description: 'Return filtered events' })
+  @ApiResponse({ status: 200, description: 'Filtered events returned' })
   findByDate(@Query() filterByDateDto: FilterByDateDto) {
     return this.eventService.findByDate(new Date(filterByDateDto.date));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get event by id' })
-  @ApiResponse({ status: 200, description: 'Return the event' })
+  @ApiResponse({
+    status: 200,
+    description: 'The event has been sucessfully returned',
+  })
   @ApiResponse({ status: 404, description: 'Event not found' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.eventService.findOne(id);
