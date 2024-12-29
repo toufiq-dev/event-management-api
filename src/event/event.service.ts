@@ -7,10 +7,21 @@ import { DbService } from 'src/db/db.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { FilterByDateDto } from './dto/filter-by-date.dto';
+import { CacheService } from 'src/cache/cache.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly dbService: DbService) {}
+  private readonly eventCacheKey = 'events:list';
+  private readonly cacheTTL: number;
+
+  constructor(
+    private readonly dbService: DbService,
+    private readonly cacheService: CacheService,
+    private readonly configService: ConfigService,
+  ) {
+    this.cacheTTL = parseInt(this.configService.get('CACHE_TTL', '3600'), 10);
+  }
 
   async create(createEventDto: CreateEventDto) {
     // Check for overlapping events
@@ -30,14 +41,33 @@ export class EventService {
   }
 
   async findAll() {
-    return this.dbService.event.findMany({
-      orderBy: {
-        date: 'asc',
-      },
+    const cachedEvents = await this.cacheService.get(this.eventCacheKey);
+
+    if (cachedEvents) {
+      return JSON.parse(cachedEvents);
+    }
+
+    const events = await this.dbService.event.findMany({
+      orderBy: { date: 'desc' },
     });
+
+    await this.cacheService.set(
+      this.eventCacheKey,
+      JSON.stringify(events),
+      this.cacheTTL,
+    );
+
+    return events;
   }
 
   async findOne(id: string) {
+    const cacheKey = `event:${id}`;
+    const cachedEvent = await this.cacheService.get(cacheKey);
+
+    if (cachedEvent) {
+      return JSON.parse(cachedEvent);
+    }
+
     const event = await this.dbService.event.findUnique({
       where: { id },
       include: {
@@ -52,6 +82,8 @@ export class EventService {
     if (!event) {
       throw new NotFoundException(`Event with ID ${id} not found`);
     }
+
+    await this.cacheService.set(cacheKey, JSON.stringify(event), this.cacheTTL);
 
     return event;
   }
@@ -78,24 +110,36 @@ export class EventService {
     const events = await this.dbService.event.findMany({
       where: filters,
     });
-  
+
     if (events.length === 0) {
-      throw new NotFoundException('No events found for the provided date range');
+      throw new NotFoundException(
+        'No events found for the provided date range',
+      );
     }
-  
+
     return events;
   }
 
   async update(id: string, updateEventDto: UpdateEventDto) {
-    return this.dbService.event.update({
+    const updatedEvent = await this.dbService.event.update({
       where: { id },
       data: updateEventDto,
     });
+
+    await this.cacheService.del(this.eventCacheKey);
+    await this.cacheService.del(`event:${id}`);
+
+    return updatedEvent;
   }
 
   async remove(id: string) {
-    return this.dbService.event.delete({
+    const deletedEvent = await this.dbService.event.delete({
       where: { id },
     });
+
+    await this.cacheService.del(this.eventCacheKey);
+    await this.cacheService.del(`event:${id}`);
+
+    return deletedEvent;
   }
 }

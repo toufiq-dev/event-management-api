@@ -5,9 +5,20 @@ import { EventModule } from './event/event.module';
 import { DbModule } from './db/db.module';
 import { AttendeeModule } from './attendee/attendee.module';
 import { RegistrationModule } from './registration/registration.module';
+import { CacheModule } from './cache/cache.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [EventModule, DbModule, AttendeeModule, RegistrationModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    EventModule,
+    DbModule,
+    AttendeeModule,
+    RegistrationModule,
+    CacheModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

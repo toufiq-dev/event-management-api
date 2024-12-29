@@ -9,6 +9,9 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/event_management?schema=public
       - NODE_ENV=development
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_TTL=3600
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
