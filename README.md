@@ -131,19 +131,19 @@ Configure the following environment variables in your `.env` file:
 - **List Events**
 
   ```http
-  GET /events
+  GET /api/events
   ```
 
 - **Get Event by ID**
 
   ```http
-  GET /events/:id
+  GET /api/events/:id
   ```
 
 - **Update Event**
 
   ```http
-  PUT /events/:id
+  PATCH /api/events/:id
   Content-Type: application/json
 
   {
@@ -154,7 +154,7 @@ Configure the following environment variables in your `.env` file:
 
 - **Delete Event**
   ```http
-  DELETE /events/:id
+  DELETE /api/events/:id
   ```
 
 ---
@@ -164,7 +164,7 @@ Configure the following environment variables in your `.env` file:
 - **Create Attendee**
 
   ```http
-  POST /attendees
+  POST /api/attendees
   Content-Type: application/json
 
   {
@@ -175,7 +175,7 @@ Configure the following environment variables in your `.env` file:
 
 - **List Attendees**
   ```http
-  GET /attendees
+  GET /api/attendees
   ```
 
 ---
@@ -185,7 +185,7 @@ Configure the following environment variables in your `.env` file:
 - **Register Attendee for Event**
 
   ```http
-  POST /registrations
+  POST /api/registrations
   Content-Type: application/json
 
   {
@@ -197,12 +197,12 @@ Configure the following environment variables in your `.env` file:
 - **List Registrations for Event**
 
   ```http
-  GET /registrations/:event_id
+  GET /api/registrations/:event_id
   ```
 
 - **Cancel Registration**
   ```http
-  DELETE /registrations/:registration_id
+  DELETE /api/registrations/:registration_id
   ```
 
 ---
@@ -275,19 +275,3 @@ Configure the following environment variables in your `.env` file:
      ```bash
      pnpm format
      ```
-
-3. **Testing**:
-   Run tests with:
-   ```bash
-   pnpm test
-   ```
-
----
-
-## **License**
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-```
-
-```

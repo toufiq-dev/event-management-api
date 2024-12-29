@@ -5,9 +5,10 @@ import { DbModule } from 'src/db/db.module';
 import { CacheModule } from 'src/cache/cache.module';
 import { EmailModule } from 'src/email/email.module';
 import { EventScheduler } from './event.scheduler';
+import { WebSocketModule } from 'src/websocket/websocket.module';
 
 @Module({
-  imports: [DbModule, EmailModule, CacheModule],
+  imports: [DbModule, EmailModule, CacheModule, WebSocketModule],
   controllers: [EventController],
   providers: [EventService, EventScheduler],
 })
