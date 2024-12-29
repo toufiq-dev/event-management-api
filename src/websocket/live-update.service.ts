@@ -9,10 +9,12 @@ import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Adjust the origin as per your requirements
+    origin: '*',
   },
 })
-export class LiveUpdateService implements OnGatewayConnection, OnGatewayDisconnect {
+export class LiveUpdateService
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
