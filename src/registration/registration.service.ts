@@ -6,12 +6,16 @@ import {
 import { DbService } from 'src/db/db.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { EmailService } from 'src/email/email.service';
+import { LiveUpdateService } from 'src/websocket/live-update.service';
 
 @Injectable()
 export class RegistrationService {
+  private readonly MINIMUM_SPOTS_THRESHOLD = 2;
+
   constructor(
     private readonly dbService: DbService,
     private readonly emailService: EmailService,
+    private readonly liveUpdateService: LiveUpdateService,
   ) {}
 
   async register(createRegistrationDto: CreateRegistrationDto) {
@@ -32,6 +36,17 @@ export class RegistrationService {
 
     // Trigger email notification
     await this.emailService.sendRegistrationEmail(attendee.email, event.name);
+
+    // Check and notify if spots are nearing capacity
+    const remainingSpots =
+      event.max_attendees - (await this.countRegistrations(event_id));
+
+    if (remainingSpots <= this.MINIMUM_SPOTS_THRESHOLD) {
+      this.liveUpdateService.notifySpotsFillingUp({
+        eventName: event.name,
+        remainingSpots,
+      });
+    }
 
     return registration;
   }
@@ -113,5 +128,11 @@ export class RegistrationService {
     if (registrationCount >= max_attendees) {
       throw new BadRequestException('Event has reached its maximum capacity');
     }
+  }
+
+  private async countRegistrations(event_id: string): Promise<number> {
+    return this.dbService.registration.count({
+      where: { event_id },
+    });
   }
 }

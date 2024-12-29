@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -9,16 +10,19 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { FilterByDateDto } from './dto/filter-by-date.dto';
 import { CacheService } from 'src/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
+import { LiveUpdateService } from 'src/websocket/live-update.service';
 
 @Injectable()
 export class EventService {
   private readonly eventCacheKey = 'events:list';
   private readonly cacheTTL: number;
+  private readonly logger = new Logger(EventService.name);
 
   constructor(
     private readonly dbService: DbService,
     private readonly cacheService: CacheService,
     private readonly configService: ConfigService,
+    private readonly liveUpdateService: LiveUpdateService,
   ) {
     this.cacheTTL = parseInt(this.configService.get('CACHE_TTL', '3600'), 10);
   }
@@ -35,9 +39,13 @@ export class EventService {
       throw new BadRequestException('An event already exists at this time');
     }
 
-    return this.dbService.event.create({
-      data: createEventDto,
-    });
+    const event = await this.dbService.event.create({ data: createEventDto });
+    this.logger.log(`Event created: ${event.name}`);
+
+    // Notify clients about the new event
+    this.liveUpdateService.notifyNewEvent(event);
+
+    return event;
   }
 
   async findAll() {
