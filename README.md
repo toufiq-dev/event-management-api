@@ -1,5 +1,3 @@
-Here’s the complete **README.md** in markdown format for your project:
-
 ````markdown
 # Event Management API
 
