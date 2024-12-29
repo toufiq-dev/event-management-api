@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AttendeeService } from './attendee.service';
 import { CreateAttendeeDto } from './dto/create-attendee.dto';
@@ -44,7 +45,7 @@ export class AttendeeController {
     status: 200,
     description: 'The attendee has been successfully returned.',
   })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.attendeeService.findOne(id);
   }
 
@@ -55,7 +56,7 @@ export class AttendeeController {
     description: 'The attendee updated successfully.',
   })
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAttendeeDto: UpdateAttendeeDto,
   ) {
     return this.attendeeService.update(id, updateAttendeeDto);
@@ -67,7 +68,7 @@ export class AttendeeController {
     status: 200,
     description: 'The attendee deleted successfully.',
   })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.attendeeService.remove(id);
   }
 }

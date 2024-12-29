@@ -59,14 +59,17 @@ export class EventController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update an event by id' })
   @ApiResponse({ status: 200, description: 'Event updated successfully' })
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
     return this.eventService.update(id, updateEventDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an event by id' })
   @ApiResponse({ status: 200, description: 'Event deleted successfully' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.eventService.remove(id);
   }
 }
