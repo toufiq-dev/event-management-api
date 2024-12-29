@@ -29,4 +29,26 @@ export class EmailService {
       throw error;
     }
   }
+
+  async sendEventReminder(to: string, eventName: string, eventDate: string) {
+    try {
+      this.logger.debug(`Queueing event reminder email for: ${to}`);
+      const job = await this.emailQueue.add(
+        'eventReminderEmail',
+        { to, eventName, eventDate },
+        {
+          attempts: 3,
+          backoff: {
+            type: 'exponential',
+            delay: 1000,
+          },
+        },
+      );
+      this.logger.debug(`Reminder email job created with ID: ${job.id}`);
+      return job;
+    } catch (error) {
+      this.logger.error('Failed to queue event reminder email:', error);
+      throw error;
+    }
+  }
 }

@@ -48,4 +48,47 @@ export class EmailProcessor {
       throw error;
     }
   }
+
+  @Process('eventReminderEmail')
+  async handleEventReminderEmail(job: Job) {
+    try {
+      const { to, eventName, eventDate } = job.data;
+      this.logger.debug(
+        `Processing reminder email for: ${to}, event: ${eventName}`,
+      );
+
+      const transporter = nodemailer.createTransport({
+        host: this.configService.get('SMTP_HOST'),
+        port: this.configService.get<number>('SMTP_PORT'),
+        secure: false,
+        auth: {
+          user: this.configService.get('SMTP_USER'),
+          pass: this.configService.get('SMTP_PASS'),
+        },
+      });
+
+      // Verify SMTP connection
+      await transporter.verify();
+      this.logger.debug('SMTP connection verified');
+
+      const result = await transporter.sendMail({
+        from: `"Event Management" <${this.configService.get('SMTP_USER')}>`,
+        to,
+        subject: `Reminder: ${eventName} is Tomorrow!`,
+        html: `
+        <h1>Event Reminder</h1>
+        <p>This is a friendly reminder that ${eventName} is happening tomorrow (${eventDate}).</p>
+        <p>We look forward to your participation!</p>
+      `,
+      });
+
+      this.logger.debug(
+        `Reminder email sent successfully: ${result.messageId}`,
+      );
+      return result;
+    } catch (error) {
+      this.logger.error('Failed to send reminder email:', error);
+      throw error;
+    }
+  }
 }
