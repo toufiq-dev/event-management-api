@@ -1,4 +1,3 @@
-````markdown
 # Event Management API
 
 The **Event Management API** is a backend system designed to handle event management operations, including event creation, attendee registration, email notifications, real-time updates, and more. Built using **NestJS**, it leverages modern tools like **Prisma** for database management, **BullJS** for job processing, **Redis** for caching, and **WebSocket/SSE** for real-time notifications.
@@ -30,11 +29,11 @@ The **Event Management API** is a backend system designed to handle event manage
 ### **Local Development Setup**
 
 1. Clone the repository:
+
    ```bash
    git clone <repository_url>
    cd <repository_name>
    ```
-````
 
 2. Install dependencies:
 
@@ -103,8 +102,8 @@ Configure the following environment variables in your `.env` file:
 | `DATABASE_URL` | PostgreSQL database connection | `postgresql://postgres:postgres@localhost:5432/event_management?schema=public` |
 | `REDIS_HOST`   | Redis host                     | `localhost`                                                                    |
 | `REDIS_PORT`   | Redis port                     | `6379`                                                                         |
-| `SMTP_HOST`    | SMTP server host               |                                                                                |
-| `SMTP_PORT`    | SMTP server port               |                                                                                |
+| `SMTP_HOST`    | SMTP server host               | `smtp.gmail.com`                                                               |
+| `SMTP_PORT`    | SMTP server port               | `587`                                                                          |
 | `SMTP_USER`    | SMTP username                  |                                                                                |
 | `SMTP_PASS`    | SMTP password                  |                                                                                |
 | `NODE_ENV`     | Environment (development/test) | `development`                                                                  |
