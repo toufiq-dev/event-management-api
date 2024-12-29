@@ -5,29 +5,35 @@ import {
 } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class RegistrationService {
-  constructor(private readonly dbService: DbService) {}
+  constructor(
+    private readonly dbService: DbService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async register(createRegistrationDto: CreateRegistrationDto) {
     const { event_id, attendee_id } = createRegistrationDto;
 
-    // Validate event and attendee
     const event = await this.validateEvent(event_id);
-    await this.validateAttendee(attendee_id);
+    const attendee = await this.validateAttendee(attendee_id);
 
-    // Check for duplicate registration
     await this.checkDuplicateRegistration(event_id, attendee_id);
 
-    // Check event capacity
     await this.checkEventCapacity(event_id, event.max_attendees);
 
     // Create the registration
-    return this.dbService.registration.create({
+    const registration = await this.dbService.registration.create({
       data: { event_id, attendee_id },
       include: { event: true, attendee: true },
     });
+
+    // Trigger email notification
+    await this.emailService.sendRegistrationEmail(attendee.email, event.name);
+
+    return registration;
   }
 
   async findRegistrationsByEvent(event_id: string) {

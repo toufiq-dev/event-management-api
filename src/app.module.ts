@@ -7,6 +7,7 @@ import { AttendeeModule } from './attendee/attendee.module';
 import { RegistrationModule } from './registration/registration.module';
 import { CacheModule } from './cache/cache.module';
 import { ConfigModule } from '@nestjs/config';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConfigModule } from '@nestjs/config';
     AttendeeModule,
     RegistrationModule,
     CacheModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
