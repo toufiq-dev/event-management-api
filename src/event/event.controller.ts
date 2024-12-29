@@ -8,6 +8,7 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EventService } from './event.service';
@@ -16,7 +17,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { FilterByDateDto } from './dto/filter-by-date.dto';
 
 @ApiTags('Event')
-@Controller('event')
+@Controller('events')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -29,7 +30,7 @@ export class EventController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all events' })
+  @ApiOperation({ summary: 'List all events' })
   @ApiResponse({
     status: 200,
     description: 'All events successfully returned',
@@ -41,8 +42,14 @@ export class EventController {
   @Get('filter')
   @ApiOperation({ summary: 'Filter events by date' })
   @ApiResponse({ status: 200, description: 'Filtered events returned' })
-  findByDate(@Query() filterByDateDto: FilterByDateDto) {
-    return this.eventService.findByDate(new Date(filterByDateDto.date));
+  @ApiResponse({ status: 400, description: 'Invalid date filters provided' })
+  async filterByDate(@Query() filterDto: FilterByDateDto) {
+    if (!filterDto.start_date && !filterDto.end_date) {
+      throw new BadRequestException(
+        'At least one date filter must be provided',
+      );
+    }
+    return this.eventService.filterByDate(filterDto);
   }
 
   @Get(':id')

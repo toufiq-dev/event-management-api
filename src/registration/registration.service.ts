@@ -30,8 +30,8 @@ export class RegistrationService {
     });
   }
 
-  async findOne(event_id: string) {
-    const registration = await this.dbService.registration.findFirst({
+  async findRegistrationsByEvent(event_id: string) {
+    const registration = await this.dbService.registration.findMany({
       where: { event_id },
       include: {
         event: true,
@@ -44,6 +44,20 @@ export class RegistrationService {
     }
 
     return registration;
+  }
+
+  async cancel(registration_id: string) {
+    const registration = await this.dbService.registration.findUnique({
+      where: { id: registration_id },
+    });
+
+    if (!registration) {
+      throw new NotFoundException('Registration does not exist');
+    }
+
+    return this.dbService.registration.delete({
+      where: { id: registration_id },
+    });
   }
 
   private async validateEvent(event_id: string) {

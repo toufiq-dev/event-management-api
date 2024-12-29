@@ -44,4 +44,18 @@ export class AttendeeService {
       where: { id },
     });
   }
+
+  async search(query: string) {
+    const attendees = await this.dbService.attendee.findMany({
+      where: {
+        OR: [{ name: { contains: query } }, { email: { contains: query } }],
+      },
+    });
+
+    if (!attendees.length) {
+      throw new NotFoundException(`No attendees found for query: ${query}`);
+    }
+
+    return attendees;
+  }
 }

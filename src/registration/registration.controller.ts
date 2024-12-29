@@ -5,13 +5,14 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
+  Delete,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegistrationService } from './registration.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 
 @ApiTags('Registration')
-@Controller('registration')
+@Controller('registrations')
 export class RegistrationController {
   constructor(private readonly registrationService: RegistrationService) {}
 
@@ -37,6 +38,17 @@ export class RegistrationController {
   })
   @ApiResponse({ status: 404, description: 'Registration not found' })
   findOne(@Param('event_id', ParseUUIDPipe) event_id: string) {
-    return this.registrationService.findOne(event_id);
+    return this.registrationService.findRegistrationsByEvent(event_id);
+  }
+
+  @Delete(':registration_id')
+  @ApiOperation({ summary: 'Cancel a registration' })
+  @ApiResponse({
+    status: 200,
+    description: 'Registration canceled successfully',
+  })
+  @ApiResponse({ status: 404, description: 'Registration not found' })
+  remove(@Param('registration_id', ParseUUIDPipe) registration_id: string) {
+    return this.registrationService.cancel(registration_id);
   }
 }

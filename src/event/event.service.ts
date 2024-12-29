@@ -6,6 +6,7 @@ import {
 import { DbService } from 'src/db/db.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { FilterByDateDto } from './dto/filter-by-date.dto';
 
 @Injectable()
 export class EventService {
@@ -55,26 +56,33 @@ export class EventService {
     return event;
   }
 
-  async findByDate(date: Date) {
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
+  async filterByDate(filterDto: FilterByDateDto) {
+    const { start_date, end_date } = filterDto;
 
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    const filters = {
+      AND: [],
+    };
 
-    const events = await this.dbService.event.findMany({
-      where: {
-        date: {
-          gte: startOfDay,
-          lt: endOfDay,
-        },
-      },
-    });
-
-    if (!events.length) {
-      throw new NotFoundException(`No events found for date ${date}`);
+    if (start_date) {
+      filters.AND.push({
+        date: { gte: new Date(start_date) },
+      });
     }
 
+    if (end_date) {
+      filters.AND.push({
+        date: { lte: new Date(end_date) },
+      });
+    }
+
+    const events = await this.dbService.event.findMany({
+      where: filters,
+    });
+  
+    if (events.length === 0) {
+      throw new NotFoundException('No events found for the provided date range');
+    }
+  
     return events;
   }
 

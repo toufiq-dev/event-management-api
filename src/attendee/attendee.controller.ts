@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   Param,
+  Query,
   Delete,
   ParseUUIDPipe,
 } from '@nestjs/common';
@@ -14,7 +15,7 @@ import { UpdateAttendeeDto } from './dto/update-attendee.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Attendee')
-@Controller('attendee')
+@Controller('attendees')
 export class AttendeeController {
   constructor(private readonly attendeeService: AttendeeService) {}
 
@@ -30,12 +31,15 @@ export class AttendeeController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all attendees' })
+  @ApiOperation({ summary: 'Get attendees with optional search' })
   @ApiResponse({
     status: 200,
-    description: 'All attendees successfully retruned.',
+    description: 'All attendees successfully retrieved.',
   })
-  findAll() {
+  findAllOrSearch(@Query('search') search?: string) {
+    if (search) {
+      return this.attendeeService.search(search);
+    }
     return this.attendeeService.findAll();
   }
 
