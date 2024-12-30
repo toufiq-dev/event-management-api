@@ -43,6 +43,21 @@ export class AttendeeController {
     return this.attendeeService.findAll();
   }
 
+  @Get('multiple-registrations')
+  @ApiOperation({ summary: 'Get attendees with multiple registrations' })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Attendees with multiple registrations successfully retrieved.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No attendees found with multiple registrations.',
+  })
+  async getAttendeesWithMultipleRegistrations() {
+    return this.attendeeService.getAttendeesWithMultipleRegistrations();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get an attendee by ID' })
   @ApiResponse({

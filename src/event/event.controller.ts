@@ -52,6 +52,17 @@ export class EventController {
     return this.eventService.filterByDate(filterDto);
   }
 
+  @Get('most-registrations')
+  @ApiOperation({ summary: 'Get the event with the most registrations' })
+  @ApiResponse({
+    status: 200,
+    description: 'The event with the most registrations has been returned',
+  })
+  @ApiResponse({ status: 404, description: 'No events found' })
+  async getEventWithMostRegistrations() {
+    return this.eventService.getEventWithMostRegistrations();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get event by id' })
   @ApiResponse({

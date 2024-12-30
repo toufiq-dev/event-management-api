@@ -58,4 +58,30 @@ export class AttendeeService {
 
     return attendees;
   }
+
+  async getAttendeesWithMultipleRegistrations() {
+    const result: any = await this.dbService.$queryRaw`
+      SELECT 
+          a.id AS attendee_id, 
+          a.name AS attendee_name,
+          a.email as attendee_email,
+          CAST(COUNT(r.event_id) AS INT) AS events_registered
+      FROM 
+          "Attendee" a
+      JOIN 
+          "Registration" r ON a.id = r.attendee_id
+      GROUP BY 
+          a.id
+      HAVING 
+          COUNT(r.event_id) > 1;
+    `;
+
+    if (!result.length) {
+      throw new NotFoundException(
+        'No attendees found with multiple registrations',
+      );
+    }
+
+    return result;
+  }
 }

@@ -150,4 +150,28 @@ export class EventService {
 
     return deletedEvent;
   }
+
+  async getEventWithMostRegistrations() {
+    const result: any = await this.dbService.$queryRaw`
+      SELECT 
+          e.id AS event_id, 
+          e.name AS event_name, 
+          CAST(COUNT(r.id) AS INT) AS registrations_count
+      FROM 
+          "Event" e
+      LEFT JOIN 
+          "Registration" r ON e.id = r.event_id
+      GROUP BY 
+          e.id
+      ORDER BY 
+          registrations_count DESC
+      LIMIT 1;
+    `;
+
+    if (!result.length) {
+      throw new NotFoundException('No events found');
+    }
+
+    return result[0];
+  }
 }
