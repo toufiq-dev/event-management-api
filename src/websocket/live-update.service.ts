@@ -49,4 +49,12 @@ export class LiveUpdateService
     );
     this.server.emit('spotsFillingUp', eventDetails);
   }
+
+  testBroadcast(message: string) {
+    this.server.emit('testEvent', {
+      name: 'Test Event',
+      message: message,
+      timestamp: new Date(),
+    });
+  }
 }

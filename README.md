@@ -9,7 +9,7 @@ The **Event Management API** is a backend system designed to handle event manage
 - **CRUD Operations** for Events and Attendees
 - Robust Registration System with Capacity Management
 - Scheduled Email Notifications (using **Nodemailer**)
-- Real-time Notifications with **WebSocket/SSE**
+- Real-time Notifications with **WebSocket**
 - Caching with **Redis**
 - Task Scheduling with **@nestjs/schedule**
 - Dockerized Setup for Consistent Development and Deployment
@@ -41,21 +41,30 @@ The **Event Management API** is a backend system designed to handle event manage
    pnpm install
    ```
 
-3. Start the development server:
+3. Ensure that PostgreSQL and Redis are running locally.
+   Use Docker Compose for convenience (see Docker Setup below).
+
+4. Run database migrations:
+
+   ```bash
+   pnpm prisma migrate dev
+   ```
+
+5. Start the development server:
 
    ```bash
    pnpm start:dev
    ```
 
-4. Access the API at:
+6. Access the API at:
 
    ```
    http://localhost:3000
    ```
 
-5. Access Swagger API Documentation at:
+7. Access Swagger API Documentation at:
    ```
-   http://localhost:3000/api/docs
+   http://localhost:3000/api-docs
    ```
 
 ---
