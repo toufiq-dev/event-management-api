@@ -1,6 +1,7 @@
 import {
   WebSocketGateway,
   WebSocketServer,
+  OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
@@ -11,14 +12,23 @@ import { Logger } from '@nestjs/common';
   cors: {
     origin: '*',
   },
+  namespace: '/',
 })
 export class LiveUpdateService
-  implements OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
   server: Server;
 
-  private readonly logger = new Logger(WebSocketGateway.name);
+  private readonly logger = new Logger(LiveUpdateService.name);
+
+  constructor() {
+    this.logger.log('WebSocket Gateway initialized');
+  }
+
+  afterInit(server: Server) {
+    this.logger.log('WebSocket Gateway initialized');
+  }
 
   handleConnection(client: any) {
     this.logger.log(`Client connected: ${client.id}`);
