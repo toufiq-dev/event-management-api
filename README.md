@@ -106,17 +106,18 @@ The **Event Management API** is a backend system designed to handle event manage
 
 Configure the following environment variables in your `.env` file:
 
-| Variable       | Description                    | Default Value                                                                  |
-| -------------- | ------------------------------ | ------------------------------------------------------------------------------ |
-| `DATABASE_URL` | PostgreSQL database connection | `postgresql://postgres:postgres@localhost:5432/event_management?schema=public` |
-| `REDIS_HOST`   | Redis host                     | `localhost`                                                                    |
-| `REDIS_PORT`   | Redis port                     | `6379`                                                                         |
-| `SMTP_HOST`    | SMTP server host               | `smtp.gmail.com`                                                               |
-| `SMTP_PORT`    | SMTP server port               | `587`                                                                          |
-| `SMTP_USER`    | SMTP username                  |                                                                                |
-| `SMTP_PASS`    | SMTP password                  |                                                                                |
-| `NODE_ENV`     | Environment (development/test) | `development`                                                                  |
-| `CACHE_TTL`    | Cache TTL in seconds           | `3600`                                                                         |
+| Variable                  | Description                    | Default Value                                                                  |
+| ------------------------- | ------------------------------ | ------------------------------------------------------------------------------ |
+| `DATABASE_URL`            | PostgreSQL database connection | `postgresql://postgres:postgres@localhost:5432/event_management?schema=public` |
+| `REDIS_HOST`              | Redis host                     | `localhost`                                                                    |
+| `REDIS_PORT`              | Redis port                     | `6379`                                                                         |
+| `SMTP_HOST`               | SMTP server host               | `smtp.gmail.com`                                                               |
+| `SMTP_PORT`               | SMTP server port               | `587`                                                                          |
+| `SMTP_USER`               | SMTP username                  |                                                                                |
+| `SMTP_PASS`               | SMTP password                  |                                                                                |
+| `NODE_ENV`                | Environment (development/test) | `development`                                                                  |
+| `CACHE_TTL`               | Cache TTL in seconds           | `3600`                                                                         |
+| `MINIMUM_SPOTS_THRESHOLD` | Notify for remaining spots     | `3`                                                                            |
 
 ---
 

@@ -2,21 +2,30 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { EmailService } from 'src/email/email.service';
 import { LiveUpdateService } from 'src/websocket/live-update.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RegistrationService {
-  private readonly MINIMUM_SPOTS_THRESHOLD = 2;
+  private readonly logger = new Logger(RegistrationService.name);
+  private readonly minimumSpotsThreshold: number;
 
   constructor(
     private readonly dbService: DbService,
     private readonly emailService: EmailService,
     private readonly liveUpdateService: LiveUpdateService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.minimumSpotsThreshold = parseInt(
+      this.configService.get('MINIMUM_SPOTS_THRESHOLD', '2'),
+      10,
+    );
+  }
 
   async register(createRegistrationDto: CreateRegistrationDto) {
     const { event_id, attendee_id } = createRegistrationDto;
@@ -34,6 +43,10 @@ export class RegistrationService {
       include: { event: true, attendee: true },
     });
 
+    this.logger.log(
+      `Registration created for attendee ${attendee.name} in event ${event.name}`,
+    );
+
     // Trigger email notification
     await this.emailService.sendRegistrationEmail(attendee.email, event.name);
 
@@ -41,7 +54,7 @@ export class RegistrationService {
     const remainingSpots =
       event.max_attendees - (await this.countRegistrations(event_id));
 
-    if (remainingSpots <= this.MINIMUM_SPOTS_THRESHOLD) {
+    if (remainingSpots <= this.minimumSpotsThreshold) {
       this.liveUpdateService.notifySpotsFillingUp({
         eventName: event.name,
         remainingSpots,
@@ -75,6 +88,8 @@ export class RegistrationService {
     if (!registration) {
       throw new NotFoundException('Registration does not exist');
     }
+
+    this.logger.log(`Registration ${registration_id} canceled`);
 
     return this.dbService.registration.delete({
       where: { id: registration_id },

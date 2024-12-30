@@ -44,8 +44,9 @@ export class LiveUpdateService
   }
 
   notifySpotsFillingUp(eventDetails: any) {
+    const { eventName, remainingSpots } = eventDetails;
     this.logger.log(
-      `Notifying clients about limited spots for event: ${eventDetails.name}`,
+      `Notifying clients about limited spots for event: ${eventName}, ${remainingSpots} are left`,
     );
     this.server.emit('spotsFillingUp', eventDetails);
   }
