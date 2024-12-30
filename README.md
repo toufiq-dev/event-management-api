@@ -1,6 +1,6 @@
 # Event Management API
 
-The **Event Management API** is a backend system designed to handle event management operations, including event creation, attendee registration, email notifications, real-time updates, and more. Built using **NestJS**, it leverages modern tools like **Prisma** for database management, **BullJS** for job processing, **Redis** for caching, and **WebSocket/SSE** for real-time notifications.
+The **Event Management API** is a backend system designed to handle event management operations, including event creation, attendee registration, email notifications, real-time updates, and more. Built using **NestJS**, it leverages modern tools like **Prisma** for database management, **BullJS** for job processing, **Redis** for caching, and **WebSocket** for real-time notifications.
 
 ---
 
@@ -105,6 +105,8 @@ The **Event Management API** is a backend system designed to handle event manage
 ## **Environment Variables**
 
 Configure the following environment variables in your `.env` file:
+If you have enabled 2-Step Verification on your Google account, you can generate an App Password to use SMTP for email notifications.
+Use your full Gmail address as the value for SMTP_USER.
 
 | Variable                  | Description                    | Default Value                                                                  |
 | ------------------------- | ------------------------------ | ------------------------------------------------------------------------------ |
@@ -128,7 +130,7 @@ Configure the following environment variables in your `.env` file:
 - **Create Event**
 
   ```http
-  POST /events
+  POST /api/events
   Content-Type: application/json
 
   {
