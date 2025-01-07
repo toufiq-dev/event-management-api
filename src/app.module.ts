@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { WebSocketModule } from './websocket/websocket.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { WebSocketModule } from './websocket/websocket.module';
     CacheModule,
     EmailModule,
     WebSocketModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
