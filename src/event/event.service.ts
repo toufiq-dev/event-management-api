@@ -50,14 +50,14 @@ export class EventService {
 
   async findAll() {
     const cachedEvents = await this.cacheService.get(this.eventCacheKey);
-
+    let events;
     if (cachedEvents) {
       return JSON.parse(cachedEvents);
+    } else {
+      events = await this.dbService.event.findMany({
+        orderBy: { date: 'desc' },
+      });
     }
-
-    const events = await this.dbService.event.findMany({
-      orderBy: { date: 'desc' },
-    });
 
     await this.cacheService.set(
       this.eventCacheKey,
